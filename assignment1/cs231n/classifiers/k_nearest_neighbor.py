@@ -1,4 +1,5 @@
 import numpy as np
+from collections import Counter
 
 class KNearestNeighbor(object):
   """ a kNN classifier with L2 distance """
@@ -156,9 +157,8 @@ class KNearestNeighbor(object):
       # neighbors. Store these labels in closest_y.                           #
       # Hint: Look up the function numpy.argsort.                             #
       #########################################################################
-      closest_index = np.argsort(dists[i,:])[:k]
-      for c in closest_index:
-          closest_y.append( self.y_train[c][0] )
+      labels = self.y_train[np.argsort(dists[i,:])].flatten()
+      closest_y = labels[0:k]
       #########################################################################
       # TODO:                                                                 #
       # Now that you have found the labels of the k nearest neighbors, you    #
@@ -166,8 +166,8 @@ class KNearestNeighbor(object):
       # Store this label in y_pred[i]. Break ties by choosing the smaller     #
       # label.                                                                #
       #########################################################################
-      counts = np.bincount(closest_y)
-      y_pred[i] = np.argmax(counts)
+      c = Counter(closest_y)
+      y_pred[i] = c.most_common(1)[0][0]
       #########################################################################
       #                           END OF YOUR CODE                            #
       #########################################################################
