@@ -30,7 +30,21 @@ def softmax_loss_naive(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  N = X.shape[0]
+  scores = np.dot(X, W)
+  for i in range(N):
+    score = scores[i]
+    shift_score = score - np.max(score)
+    softmax_score = np.exp(shift_score)/ np.sum(np.exp(shift_score))
+    correct_loss = softmax_score[y[i]]
+    loss -= np.log(correct_loss)
+    dscore = softmax_score
+    dscore[y[i]] -= 1
+    dW += np.dot(X[i][np.newaxis, :].T, dscore[np.newaxis, :])
+  loss /= N
+  loss += reg * np.sum(W*W)
+  dW /= N
+  dW += 2 * reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
@@ -54,7 +68,21 @@ def softmax_loss_vectorized(W, X, y, reg):
   # here, it is easy to run into numeric instability. Don't forget the        #
   # regularization!                                                           #
   #############################################################################
-  pass
+  N = X.shape[0]
+  scores = np.dot(X, W)
+  shift_scores = scores - np.max(scores, axis=1, keepdims=True)
+  softmax_scores = np.exp(shift_scores)/ np.sum(np.exp(shift_scores), axis=1, keepdims=True)
+    
+  correct_loss = softmax_scores[np.arange(N), y]
+  loss = np.sum(-1 * np.log(correct_loss))
+  loss /= N
+  loss += reg * np.sum(W*W)
+  
+  dscores = softmax_scores
+  dscores[np.arange(N), y] -= 1
+  dW = np.dot(X.T, dscores)
+  dW /= N
+  dW += 2 * reg * W
   #############################################################################
   #                          END OF YOUR CODE                                 #
   #############################################################################
