@@ -302,7 +302,7 @@ class FullyConnectedNet(object):
             #the last layer-1 to 1
             ind = str(i)
             if self.use_dropout:
-                dx[i] = dropout_backward(dx[i+1], dpcache[ind])
+                dx[i+1] = dropout_backward(dx[i+1], dpcache[ind])
 
             if self.use_batchnorm:
                 dx[i], grads['W'+ind], grads['b'+ind], grads['gamma'+ind], grads['beta'+ind] = affine_bn_relu_backward(dx[i+1], cache[ind])
